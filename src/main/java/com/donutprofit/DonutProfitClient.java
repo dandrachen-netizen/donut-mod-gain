@@ -5,9 +5,8 @@ import com.google.gson.GsonBuilder;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.event.v1.ClientTickEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ServerData;
@@ -49,7 +48,6 @@ public class DonutProfitClient implements ClientModInitializer {
     private static final List<Pattern> gainP = new ArrayList<>();
     private static final List<Pattern> lossP = new ArrayList<>();
 
-    private static FabricClientCommandSource src;
     private static boolean running = false;
     private static long startMs;
     private static double total;
@@ -60,8 +58,8 @@ public class DonutProfitClient implements ClientModInitializer {
         loadConfig();
 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, commandBuildContext) -> {
-            dispatcher.register(ClientCommands.literal("start").executes(c -> { src = c.getSource(); start(); return 1; }));
-            dispatcher.register(ClientCommands.literal("stop").executes(c -> { src = c.getSource(); stop(); return 1; }));
+            dispatcher.register(ClientCommands.literal("start").executes(c -> { start(); return 1; }));
+            dispatcher.register(ClientCommands.literal("stop").executes(c -> { stop(); return 1; }));
         });
 
         // System/game messages only (plugin messages) so other players can't fake transactions in chat.
@@ -175,7 +173,8 @@ public class DonutProfitClient implements ClientModInitializer {
     }
 
     private static void say(String s) {
-        if (src != null) src.sendFeedback(Component.literal(s));
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player != null) mc.gui.getChat().addMessage(Component.literal(s));
     }
 
     private static void loadConfig() {
