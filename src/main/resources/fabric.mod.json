@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "donutprofit",
+  "version": "${version}",
+  "name": "Donut Profit Tracker",
+  "description": "Passive client-side profit tracker: /start, /stop, hourly average and transaction list.",
+  "environment": "client",
+  "entrypoints": { "client": ["com.donutprofit.DonutProfitClient"] },
+  "depends": {
+    "fabricloader": ">=0.19.3",
+    "minecraft": "~26.2",
+    "java": ">=25",
+    "fabric-api": "*"
+  }
+}
